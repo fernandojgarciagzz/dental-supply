@@ -314,7 +314,11 @@ function ProductCard({ product }) {
         )}
         <button
           className="btn btn-secondary btn-sm"
-          onClick={(e) => { e.stopPropagation(); s.addToCart(product); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!s.auth) { window.showToast && window.showToast('Crea tu cuenta para armar tu pedido'); return navigate('login?tab=register'); }
+            s.addToCart(product);
+          }}
         >
           <Icon.Plus /> Agregar
         </button>

@@ -24,8 +24,8 @@ function LandingPage() {
               </>
             ) : (
               <>
-                <button className="btn btn-primary btn-lg" onClick={() => navigate('login?tab=register')}>Crear cuenta gratis</button>
-                <button className="btn btn-ghost btn-lg" onClick={() => navigate('login')}>Iniciar sesión <Icon.ArrowRight /></button>
+                <button className="btn btn-primary btn-lg" onClick={() => navigate('catalog')}>Explorar catálogo <Icon.ArrowRight /></button>
+                <button className="btn btn-ghost btn-lg" onClick={() => navigate('login?tab=register')}>Crear cuenta gratis</button>
               </>
             )}
           </div>
@@ -223,7 +223,6 @@ function LoginPage() {
 
 // ============ CATALOG ============
 function CatalogPage() {
-  const s = useStore();
   const route = useRoute();
   const cats = window.DS_CATEGORIES;
 
@@ -236,10 +235,6 @@ function CatalogPage() {
   const [loading, setLoading] = React.useState(true);
   const [catCounts, setCatCounts] = React.useState(window.DS_CATEGORY_COUNTS || {});
   const perPage = 24;
-
-  React.useEffect(() => {
-    if (!s.auth) navigate('login');
-  }, [s.auth]);
 
   React.useEffect(() => {
     setSelectedCat(route.params.cat || null);
@@ -396,10 +391,6 @@ function ProductPage() {
   const [qty, setQty] = React.useState(1);
 
   React.useEffect(() => {
-    if (!s.auth) navigate('login');
-  }, [s.auth]);
-
-  React.useEffect(() => {
     let cancelled = false;
     (async () => {
       setLoading(true);
@@ -492,7 +483,10 @@ function ProductPage() {
                 <span className="v">{qty}</span>
                 <button onClick={() => setQty(qty + 1)}>+</button>
               </div>
-              <button className="btn btn-primary btn-lg" style={{flex: 1}} onClick={() => s.addToCart(product, qty)}>
+              <button className="btn btn-primary btn-lg" style={{flex: 1}} onClick={() => {
+                if (!s.auth) { window.showToast && window.showToast('Crea tu cuenta para armar tu pedido'); return navigate('login?tab=register'); }
+                s.addToCart(product, qty);
+              }}>
                 <Icon.Plus /> Agregar al carrito
               </button>
             </div>
